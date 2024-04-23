@@ -64,7 +64,7 @@
                             </dl>
 
                             <div class="px-4 py-6 bg-gray-50 text-gray-500 font-semibold">
-                                Projectors ({{ event.subscribers|length }})
+                                Subscribers ({{ event.subscribers|length }})
                             </div>
 
                             <ul>
@@ -75,6 +75,7 @@
                                 {% endfor %}
                             </ul>
 
+                            {% if event.listeners %}
                             <div class="px-4 py-6 bg-gray-50 text-gray-500 font-semibold">
                                 Listeners ({{ event.listeners|length }})
                             </div>
@@ -86,6 +87,7 @@
                                     <li class="px-4 py-6">no listeners</li>
                                 {% endfor %}
                             </ul>
+                            {% endif %}
 
                         {% endif %}
                     {% endfor %}

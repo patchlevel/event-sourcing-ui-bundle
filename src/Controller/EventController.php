@@ -21,7 +21,7 @@ final class EventController
     public function __construct(
         private readonly Environment               $twig,
         private readonly EventRegistry             $eventRegistry,
-        private readonly ListenerProvider          $listenerProvider,
+        private readonly ListenerProvider|null     $listenerProvider,
         private readonly iterable                  $subscribers,
         private readonly SubscriberMetadataFactory $subscriberMetadataFactory,
     )
@@ -46,8 +46,12 @@ final class EventController
         ]));
     }
 
-    private function listenerMethods(string $eventClass): array
+    private function listenerMethods(string $eventClass): array|null
     {
+        if ($this->listenerProvider === null) {
+            return null;
+        }
+
         return array_map(
             static fn(ListenerDescriptor $listener) => $listener->name(),
             $this->listenerProvider->listenersForEvent($eventClass),
@@ -57,6 +61,8 @@ final class EventController
     private function subscribersMethods(string $eventClass): array
     {
         $result = [];
+
+        dump($this->subscribers);
 
         foreach ($this->subscribers as $subscriber) {
             $metadata = $this->subscriberMetadataFactory->metadata($subscriber::class);

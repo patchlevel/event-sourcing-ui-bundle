@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Patchlevel\EventSourcingAdminBundle\Controller;
 
 use Patchlevel\EventSourcing\Metadata\AggregateRoot\AggregateRootRegistry;
-use Patchlevel\EventSourcing\Store\Criteria;
+use Patchlevel\EventSourcing\Store\Criteria\Criteria;
+use Patchlevel\EventSourcing\Store\Criteria\CriteriaBuilder;
 use Patchlevel\EventSourcing\Store\Store;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -49,12 +50,16 @@ final class StoreController
 
     private function criteria(Request $request): Criteria
     {
-        $aggregateName = $request->query->get('aggregate');
-        $aggregateId = $request->query->get('aggregateId');
+        $criteriaBuilder = new CriteriaBuilder();
 
-        return new Criteria(
-            aggregateName: $aggregateName,
-            aggregateId: $aggregateId,
-        );
+        if ($request->query->get('aggregate')) {
+            $criteriaBuilder->aggregateName($request->query->get('aggregate'));
+        }
+
+        if ($request->query->get('aggregateId')) {
+            $criteriaBuilder->aggregateId($request->query->get('aggregateId'));
+        }
+
+        return $criteriaBuilder->build();
     }
 }

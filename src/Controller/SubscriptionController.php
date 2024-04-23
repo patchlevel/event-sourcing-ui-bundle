@@ -112,7 +112,7 @@ final class SubscriptionController
     {
         $criteria = new SubscriptionEngineCriteria([$id]);
 
-        $this->engine->setup($criteria);
+        $this->engine->setup($criteria, skipBooting: true);
 
         return new RedirectResponse(
             $this->router->generate('patchlevel_event_sourcing_admin_subscription_show'),

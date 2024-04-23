@@ -95,8 +95,8 @@ final class PatchlevelEventSourcingAdminExtension extends Extension
             ->setArguments([
                 new Reference('twig'),
                 new Reference(EventRegistry::class),
-                new Reference(ListenerProvider::class),
-                new TaggedIteratorArgument('event_sourcing.projector'),
+                new Reference(ListenerProvider::class, ContainerInterface::NULL_ON_INVALID_REFERENCE),
+                new TaggedIteratorArgument('event_sourcing.subscriber'),
                 new Reference(SubscriberMetadataFactory::class),
                 new Reference(TraceProjector::class, ContainerInterface::NULL_ON_INVALID_REFERENCE),
             ])

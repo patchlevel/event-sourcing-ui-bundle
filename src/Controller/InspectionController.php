@@ -10,7 +10,9 @@ use Patchlevel\EventSourcing\Aggregate\CustomId;
 use Patchlevel\EventSourcing\Metadata\AggregateRoot\AggregateRootMetadataFactory;
 use Patchlevel\EventSourcing\Metadata\AggregateRoot\AggregateRootRegistry;
 use Patchlevel\EventSourcing\Snapshot\SnapshotStore;
-use Patchlevel\EventSourcing\Store\Criteria;
+use Patchlevel\EventSourcing\Store\Criteria\AggregateIdCriterion;
+use Patchlevel\EventSourcing\Store\Criteria\AggregateNameCriterion;
+use Patchlevel\EventSourcing\Store\Criteria\Criteria;
 use Patchlevel\EventSourcing\Store\Store;
 use Patchlevel\EventSourcing\Store\Stream;
 use Patchlevel\Hydrator\Hydrator;
@@ -82,8 +84,8 @@ final class InspectionController
         $aggregate = $this->aggregate($aggregateName, $aggregateId, $until);
 
         $criteria = new Criteria(
-            aggregateName: $aggregateName,
-            aggregateId: $aggregateId,
+            new AggregateNameCriterion($aggregateName),
+            new AggregateIdCriterion($aggregateId),
         );
 
         $messages = $this->store->load(
@@ -138,8 +140,8 @@ final class InspectionController
     private function aggregate(string $aggregateName, string $aggregateId, int|null $until = null): AggregateRoot
     {
         $criteria = new Criteria(
-            aggregateName: $aggregateName,
-            aggregateId: $aggregateId,
+            new AggregateNameCriterion($aggregateName),
+            new AggregateIdCriterion($aggregateId),
         );
 
         $stream = null;
