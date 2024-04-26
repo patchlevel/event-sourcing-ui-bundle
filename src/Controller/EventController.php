@@ -62,8 +62,6 @@ final class EventController
     {
         $result = [];
 
-        dump($this->subscribers);
-
         foreach ($this->subscribers as $subscriber) {
             $metadata = $this->subscriberMetadataFactory->metadata($subscriber::class);
 
