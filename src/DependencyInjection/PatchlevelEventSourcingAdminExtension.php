@@ -152,7 +152,7 @@ final class PatchlevelEventSourcingAdminExtension extends Extension
 
         $container->register(TraceProjector::class)
             ->setArguments([
-                new Reference('doctrine.dbal.projection_connection'),
+                new Reference('event_sourcing.dbal_connection'),
                 new Reference(EventRegistry::class),
             ])
             ->addTag('event_sourcing.projector');
