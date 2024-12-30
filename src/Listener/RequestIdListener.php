@@ -1,8 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Patchlevel\EventSourcingAdminBundle\Listener;
 
 use Symfony\Component\HttpKernel\Event\RequestEvent;
+
+use function hash;
+use function mt_rand;
+use function substr;
+use function uniqid;
 
 class RequestIdListener
 {
@@ -16,7 +23,7 @@ class RequestIdListener
 
         $request = $event->getRequest();
 
-        $requestId = substr(hash('sha256', uniqid(mt_rand(), true)), 0, 6);
+        $requestId = substr(hash('sha256', uniqid((string)mt_rand(), true)), 0, 6);
 
         $request->attributes->set(self::REQUEST_ID_ATTRIBUTE, $requestId);
     }

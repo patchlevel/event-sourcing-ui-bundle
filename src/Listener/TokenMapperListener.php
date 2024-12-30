@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Patchlevel\EventSourcingAdminBundle\Listener;
 
 use Patchlevel\EventSourcingAdminBundle\TokenMapper;

@@ -47,7 +47,6 @@ final class InspectionController
     public function indexAction(Request $request): Response
     {
         if ($request->getMethod() === 'POST') {
-
             $aggregateName = $request->get('aggregate');
             $aggregateId = $request->get('aggregateId');
 

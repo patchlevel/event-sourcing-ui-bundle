@@ -1,18 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Patchlevel\EventSourcingAdminBundle\Decorator;
 
-use Patchlevel\EventSourcing\Repository\MessageDecorator\MessageDecorator;
 use Patchlevel\EventSourcing\Message\Message;
+use Patchlevel\EventSourcing\Repository\MessageDecorator\MessageDecorator;
 use Patchlevel\EventSourcingAdminBundle\Listener\RequestIdListener;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class RequestIdDecorator implements MessageDecorator
 {
     public function __construct(
-        private readonly RequestStack $requestStack
-    )
-    {
+        private readonly RequestStack $requestStack,
+    ) {
     }
 
     public function __invoke(Message $message): Message

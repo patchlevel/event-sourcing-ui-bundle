@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Patchlevel\EventSourcingAdminBundle\Projection;
 
 use JsonSerializable;
+
+use function sha1;
 
 final class Link implements JsonSerializable
 {

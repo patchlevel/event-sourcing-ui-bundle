@@ -15,15 +15,15 @@ use Patchlevel\EventSourcing\Store\Store;
 use Patchlevel\EventSourcing\Subscription\Engine\SubscriptionEngine;
 use Patchlevel\EventSourcingAdminBundle\Controller\DefaultController;
 use Patchlevel\EventSourcingAdminBundle\Controller\EventController;
-use Patchlevel\EventSourcingAdminBundle\Controller\GraphController;
 use Patchlevel\EventSourcingAdminBundle\Controller\InspectionController;
-use Patchlevel\EventSourcingAdminBundle\Controller\SubscriptionController;
 use Patchlevel\EventSourcingAdminBundle\Controller\StoreController;
+use Patchlevel\EventSourcingAdminBundle\Controller\SubscriptionController;
 use Patchlevel\EventSourcingAdminBundle\Decorator\RequestIdDecorator;
 use Patchlevel\EventSourcingAdminBundle\Listener\RequestIdListener;
 use Patchlevel\EventSourcingAdminBundle\Listener\TokenMapperListener;
 use Patchlevel\EventSourcingAdminBundle\Projection\TraceProjector;
 use Patchlevel\EventSourcingAdminBundle\TokenMapper;
+use Patchlevel\EventSourcingAdminBundle\Twig\DumpExtension;
 use Patchlevel\EventSourcingAdminBundle\Twig\EventSourcingAdminExtension;
 use Patchlevel\EventSourcingAdminBundle\Twig\HeroiconsExtension;
 use Patchlevel\EventSourcingAdminBundle\Twig\InspectionExtension;
@@ -120,6 +120,9 @@ final class PatchlevelEventSourcingAdminExtension extends Extension
             ->setArguments([
                 new Reference('event_sourcing_admin.expression_language'),
             ])
+            ->addTag('twig.extension');
+
+        $container->register(DumpExtension::class)
             ->addTag('twig.extension');
 
         $container->register(RequestIdDecorator::class)

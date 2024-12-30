@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Patchlevel\EventSourcingAdminBundle\Projection;
 
 use Doctrine\DBAL\Connection;
@@ -12,27 +14,25 @@ use Patchlevel\EventSourcing\EventBus\HeaderNotFound;
 use Patchlevel\EventSourcing\EventBus\Message;
 use Patchlevel\EventSourcing\Metadata\Event\EventRegistry;
 
+use function array_key_exists;
+use function array_values;
+
 #[Projector('trace')]
 class TraceProjector
 {
     private const NODE_TABLE = 'trace_node';
     private const LINK_TABLE = 'trace_link';
 
-    /**
-     * @var array<string, Node>
-     */
+    /** @var array<string, Node> */
     private array $nodes = [];
 
-    /**
-     * @var array<string, Link>
-     */
+    /** @var array<string, Link> */
     private array $links = [];
 
     public function __construct(
-        private readonly Connection    $connection,
+        private readonly Connection $connection,
         private readonly EventRegistry $eventRegistry,
-    )
-    {
+    ) {
     }
 
     #[Subscribe('*')]
@@ -43,9 +43,7 @@ class TraceProjector
         $toId = $this->insertMessageAsNode($message);
 
         try {
-            /**
-             * @var list<array{name: string, category: string}> $traces
-             */
+            /** @var list<array{name: string, category: string}> $traces */
             $traces = $message->header('trace');
         } catch (HeaderNotFound) {
             return;
@@ -65,9 +63,7 @@ class TraceProjector
         return $this->addNode($name, $category);
     }
 
-    /**
-     * @param array{name: string, category: string} $trace
-     */
+    /** @param array{name: string, category: string} $trace */
     private function insertTrace(array $trace): Node
     {
         return $this->addNode($trace['name'], $trace['category']);
@@ -86,7 +82,7 @@ class TraceProjector
             [
                 'from_id' => $link->fromId,
                 'to_id' => $link->toId,
-            ]
+            ],
         );
 
         $this->links[$link->id] = $link;
@@ -111,7 +107,7 @@ class TraceProjector
                 'id' => $node->id,
                 'name' => $node->name,
                 'category' => $node->category,
-            ]
+            ],
         );
 
         $this->nodes[$node->id] = $node;
@@ -152,9 +148,7 @@ class TraceProjector
         $schemaManager->dropTable(self::NODE_TABLE);
     }
 
-    /**
-     * @return list<Node>
-     */
+    /** @return list<Node> */
     public function nodes(): array
     {
         $this->init();
@@ -162,9 +156,7 @@ class TraceProjector
         return array_values($this->nodes);
     }
 
-    /**
-     * @return list<Link>
-     */
+    /** @return list<Link> */
     public function links(): array
     {
         $this->init();
@@ -187,17 +179,19 @@ class TraceProjector
             }
         }
 
-        if ($this->links === []) {
-            $result = $this->connection->fetchAllAssociative('SELECT from_id, to_id FROM ' . self::LINK_TABLE);
+        if ($this->links !== []) {
+            return;
+        }
 
-            foreach ($result as $row) {
-                $link = new Link(
-                    $row['from_id'],
-                    $row['to_id'],
-                );
+        $result = $this->connection->fetchAllAssociative('SELECT from_id, to_id FROM ' . self::LINK_TABLE);
 
-                $this->links[$link->id] = $link;
-            }
+        foreach ($result as $row) {
+            $link = new Link(
+                $row['from_id'],
+                $row['to_id'],
+            );
+
+            $this->links[$link->id] = $link;
         }
     }
 }
