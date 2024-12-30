@@ -15,10 +15,9 @@ use Patchlevel\EventSourcing\Store\Store;
 use Patchlevel\EventSourcing\Subscription\Engine\SubscriptionEngine;
 use Patchlevel\EventSourcingAdminBundle\Controller\DefaultController;
 use Patchlevel\EventSourcingAdminBundle\Controller\EventController;
-use Patchlevel\EventSourcingAdminBundle\Controller\GraphController;
 use Patchlevel\EventSourcingAdminBundle\Controller\InspectionController;
-use Patchlevel\EventSourcingAdminBundle\Controller\SubscriptionController;
 use Patchlevel\EventSourcingAdminBundle\Controller\StoreController;
+use Patchlevel\EventSourcingAdminBundle\Controller\SubscriptionController;
 use Patchlevel\EventSourcingAdminBundle\Decorator\RequestIdDecorator;
 use Patchlevel\EventSourcingAdminBundle\Listener\RequestIdListener;
 use Patchlevel\EventSourcingAdminBundle\Listener\TokenMapperListener;
@@ -37,7 +36,6 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\VarDumper\Cloner\ClonerInterface;
 
 /**
  * @psalm-type Config = array{
@@ -125,9 +123,6 @@ final class PatchlevelEventSourcingAdminExtension extends Extension
             ->addTag('twig.extension');
 
         $container->register(DumpExtension::class)
-            ->setArguments([
-                new Reference(ClonerInterface::class),
-            ])
             ->addTag('twig.extension');
 
         $container->register(RequestIdDecorator::class)

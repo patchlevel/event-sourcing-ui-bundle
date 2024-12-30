@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Patchlevel\EventSourcingAdminBundle\Twig;
 
 use Symfony\Component\VarDumper\Cloner\ClonerInterface;
+use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\HtmlDumper;
 use Twig\Environment;
 use Twig\Extension\AbstractExtension;
@@ -12,10 +13,13 @@ use Twig\TwigFunction;
 
 final class DumpExtension extends AbstractExtension
 {
-    public function __construct(
-        private ClonerInterface $cloner,
-        private ?HtmlDumper $dumper = null,
-    ) {
+    private ClonerInterface $cloner;
+    private HtmlDumper $dumper;
+
+    public function __construct()
+    {
+        $this->cloner = new VarCloner();
+        $this->dumper = new HtmlDumper();
     }
 
     /** @return list<TwigFunction> */
@@ -28,19 +32,15 @@ final class DumpExtension extends AbstractExtension
                 [
                     'is_safe' => ['html'],
                     'needs_environment' => true,
-                ]
+                ],
             ),
         ];
     }
 
     public function dump(Environment $env, mixed $var): string
     {
-        $dump = fopen('php://memory', 'r+');
-        $this->dumper ??= new HtmlDumper();
         $this->dumper->setCharset($env->getCharset());
 
-        $this->dumper->dump($this->cloner->cloneVar($var), $dump);
-
-        return stream_get_contents($dump, -1, 0);
+        return $this->dumper->dump($this->cloner->cloneVar($var), true);
     }
 }
