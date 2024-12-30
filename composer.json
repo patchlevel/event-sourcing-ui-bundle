@@ -28,6 +28,7 @@
     "symfony/config": "^5.4.31|^6.4.0|^7.0.0",
     "symfony/dependency-injection": "^5.4.33|^6.4.1|^7.0.1",
     "symfony/http-kernel": "^5.4.33|^6.4.1|^7.0.1",
+    "symfony/var-dumper": "^5.4.29|^6.4.0|^7.0.0",
     "twig/twig": "^3.5.0"
   },
   "require-dev": {
@@ -38,7 +39,6 @@
     "phpunit/phpunit": "^10.5.2",
     "psalm/plugin-symfony": "^5.1.0",
     "roave/security-advisories": "dev-master",
-    "symfony/var-dumper": "^5.4.29|^6.4.0|^7.0.0",
     "vimeo/psalm": "^5.17.0"
   },
   "config": {

@@ -24,6 +24,7 @@ use Patchlevel\EventSourcingAdminBundle\Listener\RequestIdListener;
 use Patchlevel\EventSourcingAdminBundle\Listener\TokenMapperListener;
 use Patchlevel\EventSourcingAdminBundle\Projection\TraceProjector;
 use Patchlevel\EventSourcingAdminBundle\TokenMapper;
+use Patchlevel\EventSourcingAdminBundle\Twig\DumpExtension;
 use Patchlevel\EventSourcingAdminBundle\Twig\EventSourcingAdminExtension;
 use Patchlevel\EventSourcingAdminBundle\Twig\HeroiconsExtension;
 use Patchlevel\EventSourcingAdminBundle\Twig\InspectionExtension;
@@ -120,6 +121,9 @@ final class PatchlevelEventSourcingAdminExtension extends Extension
             ->setArguments([
                 new Reference('event_sourcing_admin.expression_language'),
             ])
+            ->addTag('twig.extension');
+
+        $container->register(DumpExtension::class)
             ->addTag('twig.extension');
 
         $container->register(RequestIdDecorator::class)
