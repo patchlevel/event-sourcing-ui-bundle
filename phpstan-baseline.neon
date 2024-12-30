@@ -21,6 +21,11 @@ parameters:
 			path: src/DependencyInjection/Configuration.php
 
 		-
+			message: "#^Only iterables can be unpacked, mixed given\\.$#"
+			count: 1
+			path: src/DependencyInjection/CustomMessageHeaderCompilerPass.php
+
+		-
 			message: "#^Method Patchlevel\\\\EventSourcingAdminBundle\\\\Twig\\\\DumpExtension\\:\\:dump\\(\\) should return string but returns string\\|null\\.$#"
 			count: 1
 			path: src/Twig/DumpExtension.php

@@ -18,6 +18,11 @@
       <code><![CDATA[end]]></code>
     </UndefinedInterfaceMethod>
   </file>
+  <file src="src/DependencyInjection/CustomMessageHeaderCompilerPass.php">
+    <InvalidOperand>
+      <code><![CDATA[$headerRegistry->getArgument(0)]]></code>
+    </InvalidOperand>
+  </file>
   <file src="src/Twig/DumpExtension.php">
     <InvalidNullableReturnType>
       <code><![CDATA[string]]></code>
