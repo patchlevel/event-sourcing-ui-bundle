@@ -7,6 +7,7 @@ namespace Patchlevel\EventSourcingAdminBundle\Decorator;
 use Patchlevel\EventSourcing\Message\Message;
 use Patchlevel\EventSourcing\Repository\MessageDecorator\MessageDecorator;
 use Patchlevel\EventSourcingAdminBundle\Listener\RequestIdListener;
+use Patchlevel\EventSourcingAdminBundle\Message\Header\RequestIdHeader;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class RequestIdDecorator implements MessageDecorator
@@ -18,8 +19,6 @@ class RequestIdDecorator implements MessageDecorator
 
     public function __invoke(Message $message): Message
     {
-        return $message;
-
         $request = $this->requestStack->getMainRequest();
 
         if (!$request) {
@@ -32,6 +31,10 @@ class RequestIdDecorator implements MessageDecorator
             return $message;
         }
 
-        return $message->withHeader('requestId', $requestId);
+        if (!is_string($requestId)) {
+            return $message;
+        }
+
+        return $message->withHeader(new RequestIdHeader($requestId));
     }
 }

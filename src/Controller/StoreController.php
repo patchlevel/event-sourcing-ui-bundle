@@ -52,12 +52,14 @@ final class StoreController
     {
         $criteriaBuilder = new CriteriaBuilder();
 
-        if ($request->query->get('aggregate')) {
-            $criteriaBuilder->aggregateName($request->query->get('aggregate'));
+        $aggregateName = $request->query->getString('aggregate');
+        if ($aggregateName) {
+            $criteriaBuilder->aggregateName($aggregateName);
         }
 
-        if ($request->query->get('aggregateId')) {
-            $criteriaBuilder->aggregateId($request->query->get('aggregateId'));
+        $aggregateId = $request->query->getString('aggregateId');
+        if ($aggregateId) {
+            $criteriaBuilder->aggregateId($aggregateId);
         }
 
         return $criteriaBuilder->build();

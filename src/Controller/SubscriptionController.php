@@ -41,10 +41,10 @@ final class SubscriptionController
         }
 
         $filteredSubscriptions = [];
-        $search = $request->get('search');
-        $group = $request->get('group');
-        $mode = $request->get('mode');
-        $status = $request->get('status');
+        $search = $request->query->getString('search');
+        $group = $request->query->getString('group');
+        $mode = $request->query->getString('mode');
+        $status = $request->query->getString('status');
 
         foreach ($subscriptions as $subscription) {
             if ($search && !str_contains($subscription->id(), $search)) {

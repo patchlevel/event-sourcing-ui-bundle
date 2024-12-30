@@ -46,10 +46,18 @@ class TokenMapper
         }
 
         $file = fopen($this->path(), 'a+');
+
+        if ($file === false) {
+            throw new \RuntimeException(sprintf('File [%s] not found', $this->path()));
+        }
+
         fputcsv($file, [$requestId, $debugToken]);
         fclose($file);
     }
 
+    /**
+     * @return array<string, string>
+     */
     private function load(): array
     {
         $map = [];
@@ -59,6 +67,10 @@ class TokenMapper
         }
 
         $file = fopen($this->path(), 'r');
+
+        if ($file === false) {
+            throw new \RuntimeException(sprintf('File [%s] not found', $this->path()));
+        }
 
         while ($row = fgetcsv($file)) {
             $map[$row[0]] = $row[1];

@@ -47,8 +47,8 @@ final class InspectionController
     public function indexAction(Request $request): Response
     {
         if ($request->getMethod() === 'POST') {
-            $aggregateName = $request->get('aggregate');
-            $aggregateId = $request->get('aggregateId');
+            $aggregateName = $request->request->get('aggregate');
+            $aggregateId = $request->request->get('aggregateId');
 
             if ($aggregateName === null || $aggregateId === null) {
                 throw new NotFoundHttpException('aggregateName and aggregateId are required');
@@ -77,7 +77,7 @@ final class InspectionController
             $until = $request->query->getInt('until');
         }
 
-        $tab = $request->query->get('tab', 'details');
+        $tab = $request->query->getString('tab', 'details');
 
         $aggregateClass = $this->aggregateRootRegistry->aggregateClass($aggregateName);
         $aggregate = $this->aggregate($aggregateName, $aggregateId, $until);

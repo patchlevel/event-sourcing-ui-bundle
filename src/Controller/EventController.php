@@ -45,6 +45,10 @@ final class EventController
         return new Response($this->twig->render('@PatchlevelEventSourcingAdmin/event/index.html.twig', ['events' => $events]));
     }
 
+    /**
+     * @param class-string $eventClass
+     * @return array<string>|null
+     */
     private function listenerMethods(string $eventClass): array|null
     {
         if ($this->listenerProvider === null) {
@@ -57,6 +61,9 @@ final class EventController
         );
     }
 
+    /**
+     * @return list<string>
+     */
     private function subscribersMethods(string $eventClass): array
     {
         $result = [];
@@ -77,72 +84,6 @@ final class EventController
             foreach ($metadata->subscribeMethods[Subscribe::ALL] as $method) {
                 $result[] = sprintf('%s::%s', $subscriber::class, $method->name);
             }
-        }
-
-        return $result;
-    }
-
-    /** @return list<Node> */
-    private function source(string $eventClass): array
-    {
-        $node = $this->findNodeByEventClass($eventClass);
-
-        if (!$node) {
-            return [];
-        }
-
-        return $this->findSources($node);
-    }
-
-    private function findNodeByEventClass(string $eventClass): Node|null
-    {
-        if ($this->traceProjector === null) {
-            return null;
-        }
-
-        $nodes = $this->traceProjector->nodes();
-
-        $name = $this->eventRegistry->eventName($eventClass);
-
-        foreach ($nodes as $node) {
-            if ($node->name === $name) {
-                return $node;
-            }
-        }
-
-        return null;
-    }
-
-    private function findNodeById(string $id): Node|null
-    {
-        if ($this->traceProjector === null) {
-            return null;
-        }
-
-        $nodes = $this->traceProjector->nodes();
-
-        foreach ($nodes as $node) {
-            if ($node->id === $id) {
-                return $node;
-            }
-        }
-
-        return null;
-    }
-
-    /** @return list<Node> */
-    private function findSources(Node $node): array
-    {
-        $links = $this->traceProjector->links();
-
-        $result = [];
-
-        foreach ($links as $link) {
-            if ($link->toId !== $node->id) {
-                continue;
-            }
-
-            $result[] = $this->findNodeById($link->fromId);
         }
 
         return $result;
