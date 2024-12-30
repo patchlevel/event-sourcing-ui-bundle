@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Patchlevel\EventSourcingAdminBundle;
 
+use RuntimeException;
+
 use function fclose;
 use function fgetcsv;
 use function file_exists;
 use function fopen;
 use function fputcsv;
+use function sprintf;
 use function touch;
 
 class TokenMapper
@@ -48,16 +51,14 @@ class TokenMapper
         $file = fopen($this->path(), 'a+');
 
         if ($file === false) {
-            throw new \RuntimeException(sprintf('File [%s] not found', $this->path()));
+            throw new RuntimeException(sprintf('File [%s] not found', $this->path()));
         }
 
         fputcsv($file, [$requestId, $debugToken]);
         fclose($file);
     }
 
-    /**
-     * @return array<string, string>
-     */
+    /** @return array<string, string> */
     private function load(): array
     {
         $map = [];
@@ -69,7 +70,7 @@ class TokenMapper
         $file = fopen($this->path(), 'r');
 
         if ($file === false) {
-            throw new \RuntimeException(sprintf('File [%s] not found', $this->path()));
+            throw new RuntimeException(sprintf('File [%s] not found', $this->path()));
         }
 
         while ($row = fgetcsv($file)) {

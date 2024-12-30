@@ -9,7 +9,6 @@ use Patchlevel\EventSourcing\EventBus\ListenerDescriptor;
 use Patchlevel\EventSourcing\EventBus\ListenerProvider;
 use Patchlevel\EventSourcing\Metadata\Event\EventRegistry;
 use Patchlevel\EventSourcing\Metadata\Subscriber\SubscriberMetadataFactory;
-use Patchlevel\EventSourcingAdminBundle\Projection\Node;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 
@@ -47,6 +46,7 @@ final class EventController
 
     /**
      * @param class-string $eventClass
+     *
      * @return array<string>|null
      */
     private function listenerMethods(string $eventClass): array|null
@@ -61,9 +61,7 @@ final class EventController
         );
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     private function subscribersMethods(string $eventClass): array
     {
         $result = [];

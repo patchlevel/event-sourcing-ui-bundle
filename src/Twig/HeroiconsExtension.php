@@ -15,9 +15,7 @@ use function str_replace;
 
 final class HeroiconsExtension extends AbstractExtension
 {
-    /**
-     * @var array<string, string>
-     */
+    /** @var array<string, string> */
     private array $cache = [];
 
     /** @return list<TwigFunction> */

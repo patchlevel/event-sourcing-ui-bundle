@@ -53,6 +53,7 @@ final class EventSourcingAdminExtension extends AbstractExtension
 
     /**
      * @param Message<object> $message
+     *
      * @return class-string<AggregateRoot>
      */
     public function aggregateClass(Message $message): string
@@ -61,27 +62,24 @@ final class EventSourcingAdminExtension extends AbstractExtension
     }
 
     /**
-     * @template T of object
-     *
      * @param Message<T> $message
+     *
      * @return class-string<T>
+     *
+     * @template T of object
      */
     public function eventClass(Message $message): string
     {
         return get_class($message->event());
     }
 
-    /**
-     * @param Message<object> $message
-     */
+    /** @param Message<object> $message */
     public function eventName(Message $message): string
     {
         return $this->eventRegistry->eventName($this->eventClass($message));
     }
 
-    /**
-     * @param Message<object> $message
-     */
+    /** @param Message<object> $message */
     public function eventPayload(Message $message): string
     {
         return $this->eventSerializer->serialize(
@@ -90,9 +88,7 @@ final class EventSourcingAdminExtension extends AbstractExtension
         )->payload;
     }
 
-    /**
-     * @param Message<object> $message
-     */
+    /** @param Message<object> $message */
     public function profilerToken(Message $message): string|null
     {
         try {

@@ -10,6 +10,8 @@ use Patchlevel\EventSourcingAdminBundle\Listener\RequestIdListener;
 use Patchlevel\EventSourcingAdminBundle\Message\Header\RequestIdHeader;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+use function is_string;
+
 class RequestIdDecorator implements MessageDecorator
 {
     public function __construct(
