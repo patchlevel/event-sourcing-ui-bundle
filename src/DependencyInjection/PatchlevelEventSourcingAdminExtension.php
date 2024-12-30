@@ -37,6 +37,7 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\VarDumper\Cloner\ClonerInterface;
 
 /**
  * @psalm-type Config = array{
@@ -124,6 +125,9 @@ final class PatchlevelEventSourcingAdminExtension extends Extension
             ->addTag('twig.extension');
 
         $container->register(DumpExtension::class)
+            ->setArguments([
+                new Reference(ClonerInterface::class),
+            ])
             ->addTag('twig.extension');
 
         $container->register(RequestIdDecorator::class)
