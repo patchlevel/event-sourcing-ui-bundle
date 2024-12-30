@@ -75,7 +75,7 @@ final class EventSourcingAdminExtension extends AbstractExtension
         )->payload;
     }
 
-    public function profilerToken(Message $message): ?string
+    public function profilerToken(Message $message): string|null
     {
         return null;
 

@@ -12,6 +12,7 @@ use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 use function count;
+use function is_object;
 use function preg_replace;
 use function preg_replace_callback;
 
@@ -36,9 +37,7 @@ final class InspectionExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * @param class-string|object $event
-     */
+    /** @param class-string|object $event */
     private function icon(object|string $event, string|null $default = null): string|null
     {
         $inspect = $this->inspect($event);
@@ -46,9 +45,7 @@ final class InspectionExtension extends AbstractExtension
         return $inspect->icon ?: $default;
     }
 
-    /**
-     * @param class-string|object $event
-     */
+    /** @param class-string|object $event */
     private function color(object|string $event, string|Color|null $default = null): string|null
     {
         $inspect = $this->inspect($event);
@@ -91,9 +88,7 @@ final class InspectionExtension extends AbstractExtension
         );
     }
 
-    /**
-     * @param class-string|object $event
-     */
+    /** @param class-string|object $event */
     private function descriptionRaw(object|string $event, string|null $default = null): string|null
     {
         $inspect = $this->inspect($event);
@@ -101,9 +96,7 @@ final class InspectionExtension extends AbstractExtension
         return $inspect->description ?: $default;
     }
 
-    /**
-     * @param class-string|object $event
-     */
+    /** @param class-string|object $event */
     private function inspect(object|string $event): Inspect
     {
         if (is_object($event)) {

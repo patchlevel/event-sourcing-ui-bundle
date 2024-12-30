@@ -13,19 +13,20 @@ use Patchlevel\EventSourcingAdminBundle\Projection\Node;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 
+use function array_key_exists;
+use function array_map;
+use function sprintf;
+
 final class EventController
 {
-    /**
-     * @param iterable<object> $subscribers
-     */
+    /** @param iterable<object> $subscribers */
     public function __construct(
-        private readonly Environment               $twig,
-        private readonly EventRegistry             $eventRegistry,
-        private readonly ListenerProvider|null     $listenerProvider,
-        private readonly iterable                  $subscribers,
+        private readonly Environment $twig,
+        private readonly EventRegistry $eventRegistry,
+        private readonly ListenerProvider|null $listenerProvider,
+        private readonly iterable $subscribers,
         private readonly SubscriberMetadataFactory $subscriberMetadataFactory,
-    )
-    {
+    ) {
     }
 
     public function indexAction(): Response
@@ -41,9 +42,7 @@ final class EventController
             ];
         }
 
-        return new Response($this->twig->render('@PatchlevelEventSourcingAdmin/event/index.html.twig', [
-            'events' => $events,
-        ]));
+        return new Response($this->twig->render('@PatchlevelEventSourcingAdmin/event/index.html.twig', ['events' => $events]));
     }
 
     private function listenerMethods(string $eventClass): array|null
@@ -53,7 +52,7 @@ final class EventController
         }
 
         return array_map(
-            static fn(ListenerDescriptor $listener) => $listener->name(),
+            static fn (ListenerDescriptor $listener) => $listener->name(),
             $this->listenerProvider->listenersForEvent($eventClass),
         );
     }
@@ -71,20 +70,19 @@ final class EventController
                 }
             }
 
-            if (array_key_exists(Subscribe::ALL, $metadata->subscribeMethods)) {
-                foreach ($metadata->subscribeMethods[Subscribe::ALL] as $method) {
-                    $result[] = sprintf('%s::%s', $subscriber::class, $method->name);
-                }
+            if (!array_key_exists(Subscribe::ALL, $metadata->subscribeMethods)) {
+                continue;
+            }
+
+            foreach ($metadata->subscribeMethods[Subscribe::ALL] as $method) {
+                $result[] = sprintf('%s::%s', $subscriber::class, $method->name);
             }
         }
 
         return $result;
     }
 
-    /**
-     * @param string $eventClass
-     * @return list<Node>
-     */
+    /** @return list<Node> */
     private function source(string $eventClass): array
     {
         $node = $this->findNodeByEventClass($eventClass);
@@ -132,10 +130,7 @@ final class EventController
         return null;
     }
 
-    /**
-     * @param Node $node
-     * @return list<Node>
-     */
+    /** @return list<Node> */
     private function findSources(Node $node): array
     {
         $links = $this->traceProjector->links();
@@ -143,9 +138,11 @@ final class EventController
         $result = [];
 
         foreach ($links as $link) {
-            if ($link->toId === $node->id) {
-                $result[] = $this->findNodeById($link->fromId);
+            if ($link->toId !== $node->id) {
+                continue;
             }
+
+            $result[] = $this->findNodeById($link->fromId);
         }
 
         return $result;

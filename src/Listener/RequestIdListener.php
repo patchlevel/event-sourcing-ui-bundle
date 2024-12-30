@@ -1,8 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Patchlevel\EventSourcingAdminBundle\Listener;
 
 use Symfony\Component\HttpKernel\Event\RequestEvent;
+
+use function hash;
+use function mt_rand;
+use function substr;
+use function uniqid;
 
 class RequestIdListener
 {

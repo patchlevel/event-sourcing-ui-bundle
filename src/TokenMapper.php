@@ -1,12 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Patchlevel\EventSourcingAdminBundle;
+
+use function fclose;
+use function fgetcsv;
+use function file_exists;
+use function fopen;
+use function fputcsv;
+use function touch;
 
 class TokenMapper
 {
-    /**
-     * @var array<string, string>
-     */
+    /** @var array<string, string> */
     private array $map = [];
 
     public function __construct(private readonly string $path)
@@ -23,7 +30,7 @@ class TokenMapper
         $this->write($requestId, $debugToken);
     }
 
-    public function get(string $requestId): ?string
+    public function get(string $requestId): string|null
     {
         if ($this->map === []) {
             $this->map = $this->load();

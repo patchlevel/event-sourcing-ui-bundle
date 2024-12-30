@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace Patchlevel\EventSourcingAdminBundle\Controller;
 
-use Patchlevel\EventSourcing\Subscription\Status;
-use Patchlevel\EventSourcing\Subscription\RunMode;
+use Patchlevel\EventSourcing\Store\Store;
 use Patchlevel\EventSourcing\Subscription\Engine\SubscriptionEngine;
 use Patchlevel\EventSourcing\Subscription\Engine\SubscriptionEngineCriteria;
-use Patchlevel\EventSourcing\Store\Store;
+use Patchlevel\EventSourcing\Subscription\RunMode;
+use Patchlevel\EventSourcing\Subscription\Status;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use Twig\Environment;
+
+use function array_keys;
+use function array_map;
+use function str_contains;
 
 final class SubscriptionController
 {
@@ -42,7 +46,6 @@ final class SubscriptionController
         $mode = $request->get('mode');
         $status = $request->get('status');
 
-
         foreach ($subscriptions as $subscription) {
             if ($search && !str_contains($subscription->id(), $search)) {
                 continue;
@@ -67,8 +70,8 @@ final class SubscriptionController
             $this->twig->render('@PatchlevelEventSourcingAdmin/subscription/show.html.twig', [
                 'subscriptions' => $filteredSubscriptions,
                 'messageCount' => $messageCount,
-                'statuses' => array_map(fn (Status $status) => $status->value, Status::cases()),
-                'modes' => array_map(fn (RunMode $mode) => $mode->value, RunMode::cases()),
+                'statuses' => array_map(static fn (Status $status) => $status->value, Status::cases()),
+                'modes' => array_map(static fn (RunMode $mode) => $mode->value, RunMode::cases()),
                 'groups' => array_keys($groups),
             ]),
         );
