@@ -1,4 +1,4 @@
-# Event-Sourcing-Bundle-Admin
+# Event-Sourcing-Admin-Bundle
 
 This bundle provides a simple admin interface for the [patchlevel/event-sourcing-bundle](https://github.com/patchlevel/event-sourcing-bundle).
 
