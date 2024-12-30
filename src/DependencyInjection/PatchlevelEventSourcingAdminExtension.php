@@ -8,6 +8,7 @@ use Patchlevel\EventSourcing\EventBus\ListenerProvider;
 use Patchlevel\EventSourcing\Metadata\AggregateRoot\AggregateRootMetadataFactory;
 use Patchlevel\EventSourcing\Metadata\AggregateRoot\AggregateRootRegistry;
 use Patchlevel\EventSourcing\Metadata\Event\EventRegistry;
+use Patchlevel\EventSourcing\Metadata\Message\MessageHeaderRegistry;
 use Patchlevel\EventSourcing\Metadata\Subscriber\SubscriberMetadataFactory;
 use Patchlevel\EventSourcing\Serializer\EventSerializer;
 use Patchlevel\EventSourcing\Snapshot\SnapshotStore;
