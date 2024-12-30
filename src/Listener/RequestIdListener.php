@@ -23,7 +23,7 @@ class RequestIdListener
 
         $request = $event->getRequest();
 
-        $requestId = substr(hash('sha256', uniqid(mt_rand(), true)), 0, 6);
+        $requestId = substr(hash('sha256', uniqid((string)mt_rand(), true)), 0, 6);
 
         $request->attributes->set(self::REQUEST_ID_ATTRIBUTE, $requestId);
     }
