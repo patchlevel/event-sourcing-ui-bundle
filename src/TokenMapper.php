@@ -74,6 +74,7 @@ class TokenMapper
         }
 
         while ($row = fgetcsv($file)) {
+            /** @var array{0: string, 1: string} $row */
             $map[$row[0]] = $row[1];
         }
 

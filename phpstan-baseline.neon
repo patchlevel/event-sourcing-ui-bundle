@@ -1,32 +1,56 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Method Patchlevel\\\\EventSourcingAdminBundle\\\\Decorator\\\\RequestIdDecorator\\:\\:__invoke\\(\\) has parameter \\$message with generic class Patchlevel\\\\EventSourcing\\\\Message\\\\Message but does not specify its types\\: T$#"
+			message: '#^Method Patchlevel\\EventSourcingAdminBundle\\Decorator\\RequestIdDecorator\:\:__invoke\(\) has parameter \$message with generic class Patchlevel\\EventSourcing\\Message\\Message but does not specify its types\: T$#'
+			identifier: missingType.generics
 			count: 1
 			path: src/Decorator/RequestIdDecorator.php
 
 		-
-			message: "#^Method Patchlevel\\\\EventSourcingAdminBundle\\\\Decorator\\\\RequestIdDecorator\\:\\:__invoke\\(\\) return type with generic class Patchlevel\\\\EventSourcing\\\\Message\\\\Message does not specify its types\\: T$#"
+			message: '#^Method Patchlevel\\EventSourcingAdminBundle\\Decorator\\RequestIdDecorator\:\:__invoke\(\) return type with generic class Patchlevel\\EventSourcing\\Message\\Message does not specify its types\: T$#'
+			identifier: missingType.generics
 			count: 1
 			path: src/Decorator/RequestIdDecorator.php
 
 		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:children\\(\\)\\.$#"
+			message: '#^Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition\:\:children\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/DependencyInjection/Configuration.php
 
 		-
-			message: "#^Only iterables can be unpacked, mixed given\\.$#"
+			message: '#^Cannot call method defaultFalse\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			message: '#^Cannot call method end\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			message: '#^Cannot call method scalarNode\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			message: '#^Only iterables can be unpacked, mixed given\.$#'
+			identifier: arrayUnpacking.nonIterable
 			count: 1
 			path: src/DependencyInjection/CustomMessageHeaderCompilerPass.php
 
 		-
-			message: "#^Method Patchlevel\\\\EventSourcingAdminBundle\\\\Twig\\\\DumpExtension\\:\\:dump\\(\\) should return string but returns string\\|null\\.$#"
+			message: '#^Method Patchlevel\\EventSourcingAdminBundle\\Twig\\DumpExtension\:\:dump\(\) should return string but returns string\|null\.$#'
+			identifier: return.type
 			count: 1
 			path: src/Twig/DumpExtension.php
 
 		-
-			message: "#^Cannot cast mixed to string\\.$#"
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
 			count: 1
 			path: src/Twig/InspectionExtension.php
 
