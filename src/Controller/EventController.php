@@ -14,6 +14,8 @@ use Twig\Environment;
 
 use function array_key_exists;
 use function array_map;
+use function is_array;
+use function iterator_to_array;
 use function sprintf;
 
 final class EventController
@@ -55,9 +57,11 @@ final class EventController
             return null;
         }
 
+        $listeners = $this->listenerProvider->listenersForEvent($eventClass);
+
         return array_map(
             static fn (ListenerDescriptor $listener) => $listener->name(),
-            $this->listenerProvider->listenersForEvent($eventClass),
+            is_array($listeners) ? $listeners : iterator_to_array($listeners),
         );
     }
 
