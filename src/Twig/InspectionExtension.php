@@ -42,7 +42,7 @@ final class InspectionExtension extends AbstractExtension
     {
         $inspect = $this->inspect($event);
 
-        return $inspect->icon ?: $default;
+        return $inspect->icon ?? $default;
     }
 
     /** @param class-string|object $event */
@@ -50,7 +50,7 @@ final class InspectionExtension extends AbstractExtension
     {
         $inspect = $this->inspect($event);
 
-        $result = $inspect->color ?: $default;
+        $result = $inspect->color ?? $default;
 
         if ($result instanceof Color) {
             return $result->value;
@@ -63,15 +63,16 @@ final class InspectionExtension extends AbstractExtension
     {
         $inspect = $this->inspect($event);
 
-        $template = $inspect->description ?: $default;
+        $template = $inspect->description ?? $default;
 
         if ($template === null) {
             return null;
         }
 
+        /** @var string $message */
         $message = preg_replace_callback(
             '/\{\{ (.+) \}\}/U',
-            fn ($matches) => $this->expressionLanguage->evaluate($matches[1], ['event' => $event]),
+            fn ($matches): string => (string)$this->expressionLanguage->evaluate($matches[1], ['event' => $event]),
             $template,
         );
 
@@ -93,7 +94,7 @@ final class InspectionExtension extends AbstractExtension
     {
         $inspect = $this->inspect($event);
 
-        return $inspect->description ?: $default;
+        return $inspect->description ?? $default;
     }
 
     /** @param class-string|object $event */

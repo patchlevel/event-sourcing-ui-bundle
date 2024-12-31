@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace Patchlevel\EventSourcingAdminBundle\Twig;
 
 use Patchlevel\EventSourcing\Aggregate\AggregateHeader;
+use Patchlevel\EventSourcing\Aggregate\AggregateRoot;
+use Patchlevel\EventSourcing\Message\HeaderNotFound;
 use Patchlevel\EventSourcing\Message\Message;
 use Patchlevel\EventSourcing\Metadata\AggregateRoot\AggregateRootRegistry;
 use Patchlevel\EventSourcing\Metadata\Event\EventRegistry;
 use Patchlevel\EventSourcing\Serializer\Encoder\JsonEncoder;
 use Patchlevel\EventSourcing\Serializer\EventSerializer;
+use Patchlevel\EventSourcingAdminBundle\Message\Header\RequestIdHeader;
 use Patchlevel\EventSourcingAdminBundle\TokenMapper;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -48,25 +51,35 @@ final class EventSourcingAdminExtension extends AbstractExtension
         return array_pop($parts);
     }
 
-    /** @return class-string */
+    /**
+     * @param Message<object> $message
+     *
+     * @return class-string<AggregateRoot>
+     */
     public function aggregateClass(Message $message): string
     {
         return $this->aggregateRootRegistry->aggregateClass($message->header(AggregateHeader::class)->aggregateName);
     }
 
-    /** @return class-string */
+    /**
+     * @param Message<T> $message
+     *
+     * @return class-string<T>
+     *
+     * @template T of object
+     */
     public function eventClass(Message $message): string
     {
         return get_class($message->event());
     }
 
+    /** @param Message<object> $message */
     public function eventName(Message $message): string
     {
-        return $this->eventRegistry->eventName(
-            $this->eventClass($message),
-        );
+        return $this->eventRegistry->eventName($this->eventClass($message));
     }
 
+    /** @param Message<object> $message */
     public function eventPayload(Message $message): string
     {
         return $this->eventSerializer->serialize(
@@ -75,17 +88,15 @@ final class EventSourcingAdminExtension extends AbstractExtension
         )->payload;
     }
 
+    /** @param Message<object> $message */
     public function profilerToken(Message $message): string|null
     {
-        return null;
-
-        $headers = $message->customHeaders();
-        $requestId = $headers['requestId'] ?? null;
-
-        if (!$requestId) {
+        try {
+            $requestIdHeader = $message->header(RequestIdHeader::class);
+        } catch (HeaderNotFound) {
             return null;
         }
 
-        return $this->tokenMapper->get($requestId);
+        return $this->tokenMapper->get($requestIdHeader->requestId);
     }
 }

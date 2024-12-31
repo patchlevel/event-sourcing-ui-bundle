@@ -1,8 +1,32 @@
 parameters:
 	ignoreErrors:
+		-
+			message: "#^Method Patchlevel\\\\EventSourcingAdminBundle\\\\Decorator\\\\RequestIdDecorator\\:\\:__invoke\\(\\) has parameter \\$message with generic class Patchlevel\\\\EventSourcing\\\\Message\\\\Message but does not specify its types\\: T$#"
+			count: 1
+			path: src/Decorator/RequestIdDecorator.php
+
+		-
+			message: "#^Method Patchlevel\\\\EventSourcingAdminBundle\\\\Decorator\\\\RequestIdDecorator\\:\\:__invoke\\(\\) return type with generic class Patchlevel\\\\EventSourcing\\\\Message\\\\Message does not specify its types\\: T$#"
+			count: 1
+			path: src/Decorator/RequestIdDecorator.php
 
 		-
 			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:children\\(\\)\\.$#"
 			count: 1
 			path: src/DependencyInjection/Configuration.php
+
+		-
+			message: "#^Only iterables can be unpacked, mixed given\\.$#"
+			count: 1
+			path: src/DependencyInjection/CustomMessageHeaderCompilerPass.php
+
+		-
+			message: "#^Method Patchlevel\\\\EventSourcingAdminBundle\\\\Twig\\\\DumpExtension\\:\\:dump\\(\\) should return string but returns string\\|null\\.$#"
+			count: 1
+			path: src/Twig/DumpExtension.php
+
+		-
+			message: "#^Cannot cast mixed to string\\.$#"
+			count: 1
+			path: src/Twig/InspectionExtension.php
 

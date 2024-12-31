@@ -21,7 +21,6 @@ use Patchlevel\EventSourcingAdminBundle\Controller\SubscriptionController;
 use Patchlevel\EventSourcingAdminBundle\Decorator\RequestIdDecorator;
 use Patchlevel\EventSourcingAdminBundle\Listener\RequestIdListener;
 use Patchlevel\EventSourcingAdminBundle\Listener\TokenMapperListener;
-use Patchlevel\EventSourcingAdminBundle\Projection\TraceProjector;
 use Patchlevel\EventSourcingAdminBundle\TokenMapper;
 use Patchlevel\EventSourcingAdminBundle\Twig\DumpExtension;
 use Patchlevel\EventSourcingAdminBundle\Twig\EventSourcingAdminExtension;
@@ -98,7 +97,6 @@ final class PatchlevelEventSourcingAdminExtension extends Extension
                 new Reference(ListenerProvider::class, ContainerInterface::NULL_ON_INVALID_REFERENCE),
                 new TaggedIteratorArgument('event_sourcing.subscriber'),
                 new Reference(SubscriberMetadataFactory::class),
-                new Reference(TraceProjector::class, ContainerInterface::NULL_ON_INVALID_REFERENCE),
             ])
             ->addTag('controller.service_arguments');
 
@@ -152,12 +150,5 @@ final class PatchlevelEventSourcingAdminExtension extends Extension
                 'method' => '__invoke',
                 'priority' => -200,
             ]);
-
-        $container->register(TraceProjector::class)
-            ->setArguments([
-                new Reference('event_sourcing.dbal_connection'),
-                new Reference(EventRegistry::class),
-            ])
-            ->addTag('event_sourcing.projector');
     }
 }

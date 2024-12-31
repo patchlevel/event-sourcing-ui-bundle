@@ -24,11 +24,11 @@ class TokenMapperListener
 
         $debugToken = $response->headers->get('X-Debug-Token');
 
-        if (!$debugToken) {
+        if ($debugToken === null) {
             return;
         }
 
-        $requestId = $event->getRequest()->attributes->get(RequestIdListener::REQUEST_ID_ATTRIBUTE);
+        $requestId = $event->getRequest()->attributes->getString(RequestIdListener::REQUEST_ID_ATTRIBUTE);
 
         if (!$requestId) {
             return;

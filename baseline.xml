@@ -1,20 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.12.0@f90118cdeacd0088e7215e64c0c99ceca819e176">
+<files psalm-version="5.23.1@8471a896ccea3526b26d082f4461eeea467f10a4">
+  <file src="src/Controller/EventController.php">
+    <MixedArgument>
+      <code><![CDATA[$method->name]]></code>
+      <code><![CDATA[$method->name]]></code>
+    </MixedArgument>
+    <UndefinedDocblockClass>
+      <code><![CDATA[$method->name]]></code>
+      <code><![CDATA[$method->name]]></code>
+    </UndefinedDocblockClass>
+  </file>
   <file src="src/DependencyInjection/Configuration.php">
-    <PossiblyNullReference>
-      <code>scalarNode</code>
-    </PossiblyNullReference>
     <UndefinedInterfaceMethod>
-      <code>scalarNode</code>
+      <code><![CDATA[end]]></code>
     </UndefinedInterfaceMethod>
   </file>
-  <file src="src/DependencyInjection/PatchlevelEventSourcingExtension.php">
-    <DeprecatedClass>
-      <code>DoctrineSchemaManager::class</code>
-      <code>DoctrineSchemaManager::class</code>
-      <code>MetadataAwareProjectionHandler::class</code>
-      <code>MetadataAwareProjectionHandler::class</code>
-      <code>ProjectionListener::class</code>
-    </DeprecatedClass>
+  <file src="src/DependencyInjection/CustomMessageHeaderCompilerPass.php">
+    <InvalidOperand>
+      <code><![CDATA[$headerRegistry->getArgument(0)]]></code>
+    </InvalidOperand>
+  </file>
+  <file src="src/Twig/DumpExtension.php">
+    <InvalidNullableReturnType>
+      <code><![CDATA[string]]></code>
+    </InvalidNullableReturnType>
+    <NullableReturnStatement>
+      <code><![CDATA[$this->dumper->dump($this->cloner->cloneVar($var), true)]]></code>
+    </NullableReturnStatement>
   </file>
 </files>

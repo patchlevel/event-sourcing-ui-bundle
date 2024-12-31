@@ -23,10 +23,11 @@
   "require": {
     "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
     "patchlevel/event-sourcing-bundle": "^3.0.0",
-    "symfony/asset": "^7.0",
-    "symfony/asset-mapper": "^7.0",
+    "symfony/asset": "^5.4.33|^6.4.1|^7.0.1",
+    "symfony/asset-mapper": "^6.4.1|^7.0.1",
     "symfony/config": "^5.4.31|^6.4.0|^7.0.0",
     "symfony/dependency-injection": "^5.4.33|^6.4.1|^7.0.1",
+    "symfony/expression-language": "^5.4.33|^6.4.1|^7.0.1",
     "symfony/http-kernel": "^5.4.33|^6.4.1|^7.0.1",
     "symfony/var-dumper": "^5.4.29|^6.4.0|^7.0.0",
     "twig/twig": "^3.5.0"
@@ -37,7 +38,7 @@
     "phpspec/prophecy-phpunit": "^2.1.0",
     "phpstan/phpstan": "^1.10.48",
     "phpunit/phpunit": "^10.5.2",
-    "psalm/plugin-symfony": "^5.1.0",
+    "psalm/plugin-symfony": "^5.2",
     "roave/security-advisories": "dev-master",
     "vimeo/psalm": "^5.17.0"
   },

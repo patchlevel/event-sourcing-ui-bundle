@@ -9,12 +9,13 @@ use Patchlevel\EventSourcing\EventBus\ListenerDescriptor;
 use Patchlevel\EventSourcing\EventBus\ListenerProvider;
 use Patchlevel\EventSourcing\Metadata\Event\EventRegistry;
 use Patchlevel\EventSourcing\Metadata\Subscriber\SubscriberMetadataFactory;
-use Patchlevel\EventSourcingAdminBundle\Projection\Node;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 
 use function array_key_exists;
 use function array_map;
+use function is_array;
+use function iterator_to_array;
 use function sprintf;
 
 final class EventController
@@ -45,18 +46,26 @@ final class EventController
         return new Response($this->twig->render('@PatchlevelEventSourcingAdmin/event/index.html.twig', ['events' => $events]));
     }
 
+    /**
+     * @param class-string $eventClass
+     *
+     * @return array<string>|null
+     */
     private function listenerMethods(string $eventClass): array|null
     {
         if ($this->listenerProvider === null) {
             return null;
         }
 
+        $listeners = $this->listenerProvider->listenersForEvent($eventClass);
+
         return array_map(
             static fn (ListenerDescriptor $listener) => $listener->name(),
-            $this->listenerProvider->listenersForEvent($eventClass),
+            is_array($listeners) ? $listeners : iterator_to_array($listeners),
         );
     }
 
+    /** @return list<string> */
     private function subscribersMethods(string $eventClass): array
     {
         $result = [];
@@ -77,72 +86,6 @@ final class EventController
             foreach ($metadata->subscribeMethods[Subscribe::ALL] as $method) {
                 $result[] = sprintf('%s::%s', $subscriber::class, $method->name);
             }
-        }
-
-        return $result;
-    }
-
-    /** @return list<Node> */
-    private function source(string $eventClass): array
-    {
-        $node = $this->findNodeByEventClass($eventClass);
-
-        if (!$node) {
-            return [];
-        }
-
-        return $this->findSources($node);
-    }
-
-    private function findNodeByEventClass(string $eventClass): Node|null
-    {
-        if ($this->traceProjector === null) {
-            return null;
-        }
-
-        $nodes = $this->traceProjector->nodes();
-
-        $name = $this->eventRegistry->eventName($eventClass);
-
-        foreach ($nodes as $node) {
-            if ($node->name === $name) {
-                return $node;
-            }
-        }
-
-        return null;
-    }
-
-    private function findNodeById(string $id): Node|null
-    {
-        if ($this->traceProjector === null) {
-            return null;
-        }
-
-        $nodes = $this->traceProjector->nodes();
-
-        foreach ($nodes as $node) {
-            if ($node->id === $id) {
-                return $node;
-            }
-        }
-
-        return null;
-    }
-
-    /** @return list<Node> */
-    private function findSources(Node $node): array
-    {
-        $links = $this->traceProjector->links();
-
-        $result = [];
-
-        foreach ($links as $link) {
-            if ($link->toId !== $node->id) {
-                continue;
-            }
-
-            $result[] = $this->findNodeById($link->fromId);
         }
 
         return $result;

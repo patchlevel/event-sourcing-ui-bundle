@@ -10,7 +10,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 class TestCaseAllPublicCompilerPass implements CompilerPassInterface
 {
     private const SERVICE_PREFIX = 'event_sourcing_admin.';
+    private const SERVICE_PREFIX_BUNDLE = 'event_sourcing.';
     private const NAMESPACE_PREFIX = 'Patchlevel\\EventSourcingAdmin';
+    private const NAMESPACE_PREFIX_BUNDLE = 'Patchlevel\\EventSourcing';
 
     public function process(ContainerBuilder $container): void
     {
@@ -29,10 +31,10 @@ class TestCaseAllPublicCompilerPass implements CompilerPassInterface
 
     private function isOwnService(string $id): bool
     {
-        if (str_starts_with($id, self::SERVICE_PREFIX)) {
+        if (str_starts_with($id, self::SERVICE_PREFIX) || str_starts_with($id, self::SERVICE_PREFIX_BUNDLE)) {
             return true;
         }
 
-        return str_starts_with($id, self::NAMESPACE_PREFIX);
+        return str_starts_with($id, self::NAMESPACE_PREFIX) || str_starts_with($id, self::NAMESPACE_PREFIX_BUNDLE);
     }
 }

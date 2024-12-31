@@ -15,6 +15,7 @@ use function str_replace;
 
 final class HeroiconsExtension extends AbstractExtension
 {
+    /** @var array<string, string> */
     private array $cache = [];
 
     /** @return list<TwigFunction> */
@@ -35,7 +36,13 @@ final class HeroiconsExtension extends AbstractExtension
             throw new RuntimeException(sprintf('heroicon "%s" not found', $icon));
         }
 
-        $this->cache[$icon] = file_get_contents($path);
+        $fileContent = file_get_contents($path);
+
+        if ($fileContent === false) {
+            throw new RuntimeException(sprintf('could not load heroicon "%s"', $icon));
+        }
+
+        $this->cache[$icon] = $fileContent;
 
         return $this->injectClass($this->cache[$icon], $class);
     }

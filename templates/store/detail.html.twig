@@ -51,13 +51,7 @@
         </dd>
     </div>
     {{ _self.json('Event Payload', eventsourcing_event_payload(message)) }}
-
-
-    {% if message.customHeaders|default(false) %}
-        {{ _self.json('Custom Headers', message.customHeaders|json_encode(constant('JSON_PRETTY_PRINT'))) }}
-    {% else %}
-        {{ _self.text('Custom Headers', '-') }}
-    {% endif %}
+    {{ _self.json('Message Headers', message.headers|json_encode(constant('JSON_PRETTY_PRINT'))) }}
 </dl>
 
 {% macro text(name, content) %}
