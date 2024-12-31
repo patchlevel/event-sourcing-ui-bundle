@@ -140,6 +140,8 @@
                                             {{ _self.badge('Error', 'fill-red-500') }}
                                         {% elseif subscription.status.value == 'failed' %}
                                             {{ _self.badge('Failed', 'fill-red-500') }}
+                                        {% else %}
+                                            {{ _self.badge(subscription.status.value, 'fill-gray-500') }}
                                         {% endif %}
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
