@@ -138,6 +138,10 @@
                                             {{ _self.badge('Detached', 'fill-gray-500') }}
                                         {% elseif subscription.status.value == 'error' %}
                                             {{ _self.badge('Error', 'fill-red-500') }}
+                                        {% elseif subscription.status.value == 'failed' %}
+                                            {{ _self.badge('Failed', 'fill-red-500') }}
+                                        {% else %}
+                                            {{ _self.badge(subscription.status.value, 'fill-gray-500') }}
                                         {% endif %}
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -170,12 +174,12 @@
                                                 {{ heroicon('play-circle', 'h-5 w-5') }}
                                             </a>
                                         {% endif %}
-                                        {% if subscription.status.value in ['paused', 'error', 'finished', 'detached'] %}
+                                        {% if subscription.status.value in ['paused', 'error', 'finished', 'detached', 'failed'] %}
                                             <a href="{{ path('patchlevel_eventsourcingadmin_subscription_reactivate', {id: subscription.id}) }}" class="text-gray-500 hover:text-gray-900">
                                                 {{ heroicon('play-circle', 'h-5 w-5') }}
                                             </a>
                                         {% endif %}
-                                        {% if subscription.status.value in ['paused', 'error', 'detached'] %}
+                                        {% if subscription.status.value in ['paused', 'error', 'detached', 'failed'] %}
                                             <a href="{{ path('patchlevel_eventsourcingadmin_subscription_remove', {id: subscription.id}) }}" class="text-gray-500 hover:text-gray-900">
                                                 {{ heroicon('trash', 'h-5 w-5') }}
                                             </a>
