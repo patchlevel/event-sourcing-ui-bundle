@@ -7,14 +7,18 @@ namespace Patchlevel\EventSourcingAdminBundle\Controller;
 use Patchlevel\EventSourcing\Aggregate\AggregateHeader;
 use Patchlevel\EventSourcing\Aggregate\AggregateRoot;
 use Patchlevel\EventSourcing\Aggregate\CustomId;
+use Patchlevel\EventSourcing\Message\Message;
 use Patchlevel\EventSourcing\Metadata\AggregateRoot\AggregateRootMetadataFactory;
 use Patchlevel\EventSourcing\Metadata\AggregateRoot\AggregateRootRegistry;
 use Patchlevel\EventSourcing\Snapshot\SnapshotStore;
 use Patchlevel\EventSourcing\Store\Criteria\AggregateIdCriterion;
 use Patchlevel\EventSourcing\Store\Criteria\AggregateNameCriterion;
 use Patchlevel\EventSourcing\Store\Criteria\Criteria;
+use Patchlevel\EventSourcing\Store\Criteria\StreamCriterion;
+use Patchlevel\EventSourcing\Store\Header\PlayheadHeader;
 use Patchlevel\EventSourcing\Store\Store;
 use Patchlevel\EventSourcing\Store\Stream;
+use Patchlevel\EventSourcing\Store\StreamStore;
 use Patchlevel\Hydrator\Hydrator;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -71,6 +75,7 @@ final class InspectionController
 
     public function showAction(Request $request, string $aggregateName, string $aggregateId): Response
     {
+        $criteria = $this->getCriteria($aggregateName, $aggregateId);
         $until = null;
 
         if ($request->query->has('until')) {
@@ -82,18 +87,8 @@ final class InspectionController
         $aggregateClass = $this->aggregateRootRegistry->aggregateClass($aggregateName);
         $aggregate = $this->aggregate($aggregateName, $aggregateId, $until);
 
-        $criteria = new Criteria(
-            new AggregateNameCriterion($aggregateName),
-            new AggregateIdCriterion($aggregateId),
-        );
-
-        $messages = $this->store->load(
-            $criteria,
-        );
-
-        $count = $this->store->count(
-            $criteria,
-        );
+        $count = $this->store->count($criteria);
+        $messages = $this->store->load($criteria);
 
         try {
             $serializedError = null;
@@ -108,10 +103,7 @@ final class InspectionController
 
         try {
             $snapshotError = null;
-            $snapshot = $this->snapshotStore->load(
-                $aggregateClass,
-                CustomId::fromString($aggregateId),
-            );
+            $snapshot = $this->snapshotStore->load($aggregateClass, CustomId::fromString($aggregateId));
         } catch (Throwable $e) {
             $snapshot = null;
             $snapshotError = $e->getMessage();
@@ -138,11 +130,7 @@ final class InspectionController
 
     private function aggregate(string $aggregateName, string $aggregateId, int|null $until = null): AggregateRoot
     {
-        $criteria = new Criteria(
-            new AggregateNameCriterion($aggregateName),
-            new AggregateIdCriterion($aggregateId),
-        );
-
+        $criteria = $this->getCriteria($aggregateName, $aggregateId);
         $stream = null;
 
         try {
@@ -160,7 +148,7 @@ final class InspectionController
 
             return $aggregateClass::createFromEvents(
                 $this->unpack($stream, $until),
-                $firstMessage->header(AggregateHeader::class)->playhead - 1,
+                $this->getPlayhead($firstMessage) - 1,
             );
         } finally {
             $stream?->close();
@@ -171,11 +159,51 @@ final class InspectionController
     private function unpack(Stream $stream, int|null $until = null): Traversable
     {
         foreach ($stream as $message) {
-            if ($until !== null && $message->header(AggregateHeader::class)->playhead > $until) {
+            if ($until === null) {
+                yield $message->event();
+            }
+
+            if ($message->hasHeader(AggregateHeader::class) && $message->header(AggregateHeader::class)->playhead > $until) {
+                break;
+            }
+
+            if ($message->hasHeader(PlayheadHeader::class) && $message->header(PlayheadHeader::class)->playhead > $until) {
                 break;
             }
 
             yield $message->event();
         }
+    }
+
+    private function getCriteria(string $aggregateName, string $aggregateId): Criteria
+    {
+        if ($this->store instanceof StreamStore) {
+            return new Criteria(
+                new StreamCriterion(
+                    $this->aggregateRootMetadataFactory->metadata(
+                        $this->aggregateRootRegistry->aggregateClass($aggregateName),
+                    )->streamName($aggregateId),
+                ),
+            );
+        }
+
+        return new Criteria(
+            new AggregateNameCriterion($aggregateName),
+            new AggregateIdCriterion($aggregateId),
+        );
+    }
+
+    /**
+     * @param Message<object> $message
+     *
+     * @return positive-int
+     */
+    public function getPlayhead(Message $message): int
+    {
+        if ($message->hasHeader(AggregateHeader::class)) {
+            return $message->header(AggregateHeader::class)->playhead;
+        }
+
+        return $message->header(PlayheadHeader::class)->playhead;
     }
 }

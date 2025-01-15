@@ -106,6 +106,7 @@ final class PatchlevelEventSourcingAdminExtension extends Extension
                 new Reference(EventRegistry::class),
                 new Reference(EventSerializer::class),
                 new Reference(TokenMapper::class),
+                new Reference(Store::class),
             ])
             ->addTag('twig.extension');
 

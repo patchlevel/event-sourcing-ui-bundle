@@ -1,20 +1,22 @@
 <dl class="divide-y divide-gray-100">
-    {% set aggregateHeader = message.header("Patchlevel\\EventSourcing\\Aggregate\\AggregateHeader") %}
+    {% if eventsourcing_uses_stream_store() %}
+        {{ _self.text('Stream', eventsourcing_stream_name(message)) }}
+    {% else %}
+        {{ _self.text('Aggregate', eventsourcing_aggregate_name(message)) }}
+        {{ _self.text('Aggregate Class', eventsourcing_aggregate_class(message)) }}
 
-    {{ _self.text('Aggregate', aggregateHeader.aggregateName) }}
-    {{ _self.text('Aggregate Class', eventsourcing_aggregate_class(message)) }}
+        <div class="p-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 group/parent">
+            <dt class="text-sm font-medium leading-6 text-gray-900">Aggregate Id</dt>
+            <dd class="mt-1 text-sm leading-6 text-gray-500 sm:col-span-2 sm:mt-0">
+                {{ eventsourcing_aggregate_id(message) }}
+                <a class="group-hover/parent:visible invisible" href="{{ path('patchlevel_event_sourcing_admin_inspection_show', {aggregateName: eventsourcing_aggregate_name(message), aggregateId: eventsourcing_aggregate_id(message)}) }}">
+                    {{ heroicon('identification', 'h-5 w-5 -mt-1 text-gray-400 inline') }}
+                </a>
+            </dd>
+        </div>
+    {% endif %}
 
-    <div class="p-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 group/parent">
-        <dt class="text-sm font-medium leading-6 text-gray-900">Aggregate Id</dt>
-        <dd class="mt-1 text-sm leading-6 text-gray-500 sm:col-span-2 sm:mt-0">
-            {{ aggregateHeader.aggregateId }}
-            <a class="group-hover/parent:visible invisible" href="{{ path('patchlevel_event_sourcing_admin_inspection_show', {aggregateName: aggregateHeader.aggregateName, aggregateId: aggregateHeader.aggregateId}) }}">
-                {{ heroicon('identification', 'h-5 w-5 -mt-1 text-gray-400 inline') }}
-            </a>
-        </dd>
-    </div>
-
-    {{ _self.text('Aggregate Playhead', aggregateHeader.playhead) }}
+    {{ _self.text('Playhead', eventsourcing_playhead(message)) }}
 
     <div class="p-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 group/parent">
         <dt class="text-sm font-medium leading-6 text-gray-900">Event Name</dt>
@@ -36,7 +38,7 @@
         </dd>
     </div>
 
-    {{ _self.text('Recorded on', aggregateHeader.recordedOn|date('Y-m-d H:i:s')) }}
+    {{ _self.text('Recorded on', eventsourcing_recorded_on(message)|date('Y-m-d H:i:s')) }}
     <div class="p-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
         <dt class="text-sm font-medium leading-6 text-gray-900">Profiler Token</dt>
         <dd class="mt-1 text-sm leading-6 text-gray-500 sm:col-span-2 sm:mt-0">

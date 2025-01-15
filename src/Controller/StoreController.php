@@ -62,6 +62,11 @@ final class StoreController
             $criteriaBuilder->aggregateId($aggregateId);
         }
 
+        $streamName = $request->query->getString('streamName');
+        if ($streamName) {
+            $criteriaBuilder->streamName($streamName);
+        }
+
         return $criteriaBuilder->build();
     }
 }
