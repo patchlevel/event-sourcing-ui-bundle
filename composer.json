@@ -21,7 +21,7 @@
     }
   ],
   "require": {
-    "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
+    "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0",
     "patchlevel/event-sourcing": "^3.6.0",
     "patchlevel/event-sourcing-bundle": "^3.0.0",
     "symfony/asset": "^5.4.33|^6.4.1|^7.0.1",
