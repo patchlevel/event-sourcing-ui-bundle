@@ -10,41 +10,56 @@
 
         <div class="">
             <form class="flex gap-2 items-end" action="{{ path('patchlevel_event_sourcing_admin_store_show') }}">
-                <div class="w-48">
-                    <label for="aggregate" class="block text-xs font-medium leading-6 text-gray-900">Aggregate</label>
-                    <select id="aggregate" name="aggregate"
-                            class="mt-1 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                        <option {% if app.request.get('aggregate') == "" %}selected{% endif %}
-                                value="">-- choose --
-                        </option>
-                        {% for aggregate in aggregates %}
-                            <option {% if app.request.get('aggregate') == aggregate %}selected{% endif %}
-                                    value="{{ aggregate }}">{{ aggregate }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="w-96">
-                    <label for="aggregateId" class="block text-xs font-medium leading-6 text-gray-900">Aggregate
-                        ID</label>
-                    <div class="mt-1">
-                        <input type="text" name="aggregateId" id="aggregateId"
-                               class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                               placeholder="018d233e-7906-73f1-8a0c-f76a4fdac34e"
-                               value="{{ app.request.get('aggregateId') }}">
+                {% if eventsourcing_uses_stream_store() %}
+                    <div class="w-96">
+                        <label for="streamName" class="block text-xs font-medium leading-6 text-gray-900">
+                            StreamName
+                        </label>
+                        <div class="mt-1">
+                            <input type="text" name="streamName" id="streamName"
+                                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                   placeholder="hotel-018d233e-7906-73f1-8a0c-f76a4fdac34e"
+                                   value="{{ app.request.get('streamName') }}">
+                        </div>
                     </div>
-                </div>
+                {% else %}
+                    <div class="w-48">
+                        <label for="aggregate" class="block text-xs font-medium leading-6 text-gray-900">Aggregate</label>
+                        <select id="aggregate" name="aggregate"
+                                class="mt-1 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                            <option {% if app.request.get('aggregate') == "" %}selected{% endif %}
+                                    value="">-- choose --
+                            </option>
+                            {% for aggregate in aggregates %}
+                                <option {% if app.request.get('aggregate') == aggregate %}selected{% endif %}
+                                        value="{{ aggregate }}">{{ aggregate }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="w-96">
+                        <label for="aggregateId" class="block text-xs font-medium leading-6 text-gray-900">
+                            Aggregate ID
+                        </label>
+                        <div class="mt-1">
+                            <input type="text" name="aggregateId" id="aggregateId"
+                                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                   placeholder="018d233e-7906-73f1-8a0c-f76a4fdac34e"
+                                   value="{{ app.request.get('aggregateId') }}">
+                        </div>
+                    </div>
+                {% endif %}
 
                 <button type="submit"
                         class="rounded-md bg-indigo-600 px-2.5 py-1.5 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                     {{ heroicon('funnel', 'h-6 w-6') }}
                 </button>
 
-                {% if app.request.get('aggregate') or app.request.get('aggregateId') %}
-                <a class="rounded-md bg-red-600 px-2.5 py-1.5 font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-                   href="{{ path('patchlevel_event_sourcing_admin_store_show') }}">
-                    {{ heroicon('backspace', 'h-6 w-6') }}
-                </a>
+                {% if app.request.get('streamName') or app.request.get('aggregate') or app.request.get('aggregateId') %}
+                    <a class="rounded-md bg-red-600 px-2.5 py-1.5 font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                       href="{{ path('patchlevel_event_sourcing_admin_store_show') }}">
+                        {{ heroicon('backspace', 'h-6 w-6') }}
+                    </a>
                 {% endif %}
             </form>
         </div>
@@ -59,11 +74,17 @@
                                 <th scope="col"
                                     class="py-3.5 pl-4 pr-3 text-right text-sm font-semibold text-gray-900 sm:pl-6 ">#
                                 </th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                    Aggregate
-                                </th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">ID
-                                </th>
+                                {% if eventsourcing_uses_stream_store() %}
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Stream
+                                    </th>
+                                {% else %}
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Aggregate
+                                    </th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">ID
+                                    </th>
+                                {% endif %}
                                 <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">
                                     Playhead
                                 </th>
@@ -78,33 +99,48 @@
                             </thead>
                             <tbody class="divide-y divide-gray-200 bg-white">
                             {% for message in messages %}
-                                {% set aggregateHeader = message.header("Patchlevel\\EventSourcing\\Aggregate\\AggregateHeader") %}
-
                                 <tr class="group/row">
                                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 text-right">{{ messages.index }}</td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 group/parent">
-                                        {{ aggregateHeader.aggregateName }}
-                                        <a href="{{ path('patchlevel_event_sourcing_admin_store_show', { aggregate: aggregateHeader.aggregateName }) }}"
-                                           class="text-gray-500 hover:text-gray-900 invisible group-hover/parent:visible">
-                                            {{ heroicon('funnel', 'h-5 w-5 inline') }}
-                                        </a>
-                                    </td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 group/parent" title="{{ aggregateHeader.aggregateId }}">
-                                        {{ eventsourcing_short_id(aggregateHeader.aggregateId) }}
-                                        <a href="{{ path('patchlevel_event_sourcing_admin_store_show', { aggregate: aggregateHeader.aggregateName, aggregateId: aggregateHeader.aggregateId }) }}"
-                                           class="text-gray-500 hover:text-gray-900 invisible group-hover/parent:visible">
-                                            {{ heroicon('funnel', 'h-5 w-5 inline') }}
-                                        </a>
-                                        <a href="{{ path('patchlevel_event_sourcing_admin_inspection_show', { aggregateName: aggregateHeader.aggregateName, aggregateId: aggregateHeader.aggregateId }) }}#{{ aggregateHeader.playhead }}"
-                                           class="text-gray-500 hover:text-gray-900 invisible group-hover/parent:visible">
-                                            {{ heroicon('identification', 'h-5 w-5 inline') }}
-                                        </a>
-                                        <a href="#" data-clipboard="{{ aggregateHeader.aggregateId }}"
-                                           class="text-gray-500 hover:text-gray-900 invisible group-hover/parent:visible">
-                                            {{ heroicon('clipboard', 'h-5 w-5 inline') }}
-                                        </a>
-                                    </td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-right">{{ aggregateHeader.playhead }}</td>
+
+                                    {% if eventsourcing_uses_stream_store() %}
+                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 group/parent">
+                                            {{ eventsourcing_stream_name(message) }}
+                                            <a href="{{ path('patchlevel_event_sourcing_admin_store_show', { streamName: eventsourcing_stream_name(message) }) }}"
+                                               class="text-gray-500 hover:text-gray-900 invisible group-hover/parent:visible">
+                                                {{ heroicon('funnel', 'h-5 w-5 inline') }}
+                                            </a>
+                                            <a href="#" data-clipboard="{{ eventsourcing_stream_name(message) }}"
+                                               class="text-gray-500 hover:text-gray-900 invisible group-hover/parent:visible">
+                                                {{ heroicon('clipboard', 'h-5 w-5 inline') }}
+                                            </a>
+                                        </td>
+                                    {% else %}
+                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 group/parent">
+                                            {{ eventsourcing_aggregate_name(message) }}
+                                            <a href="{{ path('patchlevel_event_sourcing_admin_store_show', { aggregate: eventsourcing_aggregate_name(message) }) }}"
+                                               class="text-gray-500 hover:text-gray-900 invisible group-hover/parent:visible">
+                                                {{ heroicon('funnel', 'h-5 w-5 inline') }}
+                                            </a>
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 group/parent"
+                                            title="{{ eventsourcing_aggregate_id(message) }}">
+                                            {{ eventsourcing_short_id(eventsourcing_aggregate_id(message)) }}
+                                            <a href="{{ path('patchlevel_event_sourcing_admin_store_show', { aggregate: eventsourcing_aggregate_name(message), aggregateId: eventsourcing_aggregate_id(message) }) }}"
+                                               class="text-gray-500 hover:text-gray-900 invisible group-hover/parent:visible">
+                                                {{ heroicon('funnel', 'h-5 w-5 inline') }}
+                                            </a>
+                                            <a href="{{ path('patchlevel_event_sourcing_admin_inspection_show', { aggregateName: eventsourcing_aggregate_name(message), aggregateId: eventsourcing_aggregate_id(message) }) }}#{{ eventsourcing_playhead(message) }}"
+                                               class="text-gray-500 hover:text-gray-900 invisible group-hover/parent:visible">
+                                                {{ heroicon('identification', 'h-5 w-5 inline') }}
+                                            </a>
+                                            <a href="#" data-clipboard="{{ eventsourcing_aggregate_id(message) }}"
+                                               class="text-gray-500 hover:text-gray-900 invisible group-hover/parent:visible">
+                                                {{ heroicon('clipboard', 'h-5 w-5 inline') }}
+                                            </a>
+                                        </td>
+                                    {% endif %}
+
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-right">{{ eventsourcing_playhead(message) }}</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 group/parent">
                                         {{ eventsourcing_event_name(message) }}
                                         <a href="{{ path('patchlevel_event_sourcing_admin_event_index', { name: eventsourcing_event_name(message)}) }}#{{ eventsourcing_event_name(message) }}"
@@ -112,7 +148,7 @@
                                             {{ heroicon('calendar', 'h-5 w-5 inline') }}
                                         </a>
                                     </td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ aggregateHeader.recordedOn|date('Y-m-d H:i:s') }}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ eventsourcing_recorded_on(message) ? eventsourcing_recorded_on(message)|date('Y-m-d H:i:s') : '-' }}</td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-6">
                                         <a href="#" class="text-gray-500 hover:text-gray-900"
                                            data-modal="modal-{{ loop.index }}">
@@ -153,22 +189,22 @@
     </div>
 
     <script>
-      document.querySelectorAll("[data-modal]").forEach(function(button) {
-        button.addEventListener("click", function() {
-          var dialog = document.getElementById(button.dataset.modal);
-          dialog.showModal();
-          dialog.querySelector("button").addEventListener("click", function() {
-            dialog.close();
-          });
+        document.querySelectorAll("[data-modal]").forEach(function (button) {
+            button.addEventListener("click", function () {
+                var dialog = document.getElementById(button.dataset.modal);
+                dialog.showModal();
+                dialog.querySelector("button").addEventListener("click", function () {
+                    dialog.close();
+                });
+            });
         });
-      });
 
-      document.querySelectorAll("[data-clipboard]").forEach(function(button) {
-        button.addEventListener("click", function(event) {
-          event.preventDefault();
-          navigator.clipboard.writeText(button.dataset.clipboard);
+        document.querySelectorAll("[data-clipboard]").forEach(function (button) {
+            button.addEventListener("click", function (event) {
+                event.preventDefault();
+                navigator.clipboard.writeText(button.dataset.clipboard);
+            });
         });
-      });
     </script>
 
 {% endblock %}

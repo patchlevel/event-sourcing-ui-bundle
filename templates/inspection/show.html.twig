@@ -158,8 +158,6 @@
                     <div class="flow-root">
                         <ul role="list" class="-mb-8">
                             {% for message in messages %}
-                                {% set aggregateHeader = message.header("Patchlevel\\EventSourcing\\Aggregate\\AggregateHeader") %}
-
                                 <li class="group/message relative {% if until and loop.index > until %}saturate-0{% endif %}">
                                     <span id="{{ loop.index }}" class="absolute -top-48"></span>
                                     <div id="marker-{{ loop.index }}" class="absolute -left-10 z-20 invisible">
@@ -186,7 +184,7 @@
                                                                 data-modal="modal-{{ loop.index }}">
                                                             {{ heroicon('magnifying-glass', 'h-5 w-5 inline') }}
                                                         </button>
-                                                        <a href="{{ path('patchlevel_event_sourcing_admin_inspection_show', { aggregateId: aggregateId, aggregateName: aggregateName, tab: tab, until: aggregateHeader.playhead }) }}#{{ aggregateHeader.playhead }}"
+                                                        <a href="{{ path('patchlevel_event_sourcing_admin_inspection_show', { aggregateId: aggregateId, aggregateName: aggregateName, tab: tab, until: eventsourcing_playhead(message) }) }}#{{ eventsourcing_playhead(message) }}"
                                                            class="text-gray-500 hover:text-gray-900 invisible group-hover/message:visible"
                                                         >
                                                             {{ heroicon('play-pause', 'h-5 w-5 inline') }}
@@ -206,7 +204,7 @@
                                                     </dialog>
                                                 </div>
                                                 <div class="whitespace-nowrap text-right text-xs text-gray-500">
-                                                    {{ aggregateHeader.recordedOn|date('Y-m-d H:i:s') }}
+                                                    {{ eventsourcing_recorded_on(message) ? eventsourcing_recorded_on(message)|date('Y-m-d H:i:s') : '-' }}
                                                 </div>
                                             </div>
                                         </div>
