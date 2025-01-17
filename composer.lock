@@ -9088,6 +9088,6 @@
     "platform": {
         "php": "~8.2.0 || ~8.3.0"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
